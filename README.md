@@ -13,3 +13,6 @@ Query [Carto](http://carto.com) datasets with a Socrata-style
 http://localhost:8080/resource/incidents?$select=*&$where=location_b = '100 BLOCK W GIRARD AVE'
 ```
 
+## See also
+* [timothyclemansinsea/soql-for-cartodb](https://github.com/timothyclemansinsea/soql-for-cartodb)
+
