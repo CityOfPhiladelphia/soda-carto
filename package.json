@@ -8,7 +8,10 @@
     "watch": "npm-watch"
   },
   "watch": {
-    "test": "test.js"
+    "test": {
+      "patterns": ["src", "test.js"],
+      "inherit": true
+    }
   },
   "keywords": [],
   "author": "timwis <tim@timwis.com>",
