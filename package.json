@@ -4,7 +4,11 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "node test.js | tap-spec"
+    "test": "node test.js | tap-spec",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "test": "test.js"
   },
   "keywords": [],
   "author": "timwis <tim@timwis.com>",
@@ -13,6 +17,7 @@
     "dotenv": "^2.0.0",
     "from2-string": "^1.1.0",
     "node-soda2-parser": "^1.0.2",
+    "npm-watch": "^0.1.7",
     "request": "^2.76.0",
     "server-router": "^3.0.0"
   },

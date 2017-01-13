@@ -1,5 +1,5 @@
 const test = require('tape')
-const convertRequest = require('../lib').convertRequest
+const convertRequest = require('./lib').convertRequest
 
 test('select: multiple fields', function (t) {
   t.plan(1)
@@ -13,7 +13,6 @@ test('select: wildcard', function (t) {
   t.equal(sql, 'SELECT *')
 })
 
-// Fails because of regex that appends ::json not being greedy
 test('select: convex hull', function (t) {
   t.plan(1)
   const sql = convertRequest(null, '$select=convex_hull(geom)')
