@@ -18,7 +18,7 @@ http.createServer((req, res) => router(req, res).pipe(res)).listen(port)
 function resourceHandler (req, res, params) {
   const query = url.parse(req.url, true).query
   const sql = convertRequest(params.resource, query)
-  const cartoUrl = `${endpoint}sql/?format=GeoJSON&q=${sql}`
+  const cartoUrl = `${endpoint}sql?q=${sql}`
   return request(cartoUrl)
 }
 

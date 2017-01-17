@@ -9,7 +9,7 @@
   },
   "watch": {
     "test": {
-      "patterns": ["src", "test.js"],
+      "patterns": ["lib", "test.js"],
       "inherit": true
     }
   },
