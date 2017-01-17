@@ -4,12 +4,12 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "node test.js | tap-spec",
+    "test": "node test/index.js | tap-spec",
     "watch": "npm-watch"
   },
   "watch": {
     "test": {
-      "patterns": ["lib", "test.js"],
+      "patterns": ["lib", "test"],
       "inherit": true
     }
   },
