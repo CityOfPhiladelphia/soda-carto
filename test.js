@@ -98,3 +98,9 @@ test.skip('group: date truncate', function (t) {
   const sql = convertRequest(null, `$group=date_trunc_ym(datetime)`)
   t.equal(sql, `SELECT ${star} GROUP BY date_trunc(datetime, 'month')`)
 })
+
+test.skip('limit', function (t) {
+  t.plan(1)
+  const sql = convertRequest(null, `$limit=10`)
+  t.equal(sql, `SELECT ${star} LIMIT 10`)
+})
