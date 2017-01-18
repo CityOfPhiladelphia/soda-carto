@@ -17,8 +17,11 @@ http.createServer((req, res) => router(req, res).pipe(res)).listen(port)
 
 function resourceHandler (req, res, params) {
   const query = url.parse(req.url, true).query
-  const sql = convertRequest(params.resource, query)
+  const opts = { dataset: params.resource }
+  const sql = convertRequest(query, opts)
   const cartoUrl = `${endpoint}sql?q=${sql}`
+
+  res.setHeader('Content-Type', 'application/json')
   return request(cartoUrl)
 }
 

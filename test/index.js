@@ -8,7 +8,7 @@ queries
   .forEach((query) => {
     test(query.label, (t) => {
       t.plan(1)
-      const sql = convertRequest(null, query.input)
+      const sql = convertRequest(query.input)
       t.equal(sql, query.expect)
     })
   })
