@@ -56,6 +56,7 @@ provider:
 functions:
   soda:
     handler: handler.soda
+    timeout: 30
     events:
       - http: GET resource/{dataset}
 
