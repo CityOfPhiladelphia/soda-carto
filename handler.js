@@ -10,15 +10,16 @@ module.exports.soda = (event, context, callback) => {
   const sql = convertRequest(query, opts)
   const cartoUrl = `${endpoint}sql?q=${encodeURIComponent(sql)}`
 
-  // Request requires internet access
-  // request(cartoUrl, callback)
+  request(cartoUrl, (err, resp, body) => {
+    if (err) return callback(err)
 
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      cartoUrl: cartoUrl
-    })
-  }
+    // the lambda callback can't seem to handle all the properties that
+    // the request module returns in `resp`
+    const response = {
+      statusCode: resp.statusCode,
+      body: resp.body
+    }
 
-  callback(null, response)
+    callback(null, response)
+  })
 }
