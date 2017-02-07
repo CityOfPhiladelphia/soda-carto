@@ -9,7 +9,10 @@
   },
   "watch": {
     "test": {
-      "patterns": ["lib", "test"],
+      "patterns": [
+        "lib",
+        "test"
+      ],
       "inherit": true
     }
   },
@@ -19,7 +22,7 @@
   "dependencies": {
     "dotenv": "^2.0.0",
     "from2-string": "^1.1.0",
-    "node-soda2-parser": "^1.0.2",
+    "node-soda2-parser": "^2.0.0",
     "npm-watch": "^0.1.7",
     "request": "^2.76.0",
     "server-router": "^3.0.0"

@@ -1,5 +1,5 @@
 const star = '*, ST_AsGeoJSON(the_geom)::json AS the_geom'
-const limit = 'LIMIT 0, 1000' // default limit per lib/index.js
+const limit = 'LIMIT 1000' // default limit per lib/index.js
 
 module.exports = [
   {
@@ -88,6 +88,6 @@ module.exports = [
   {
     label: 'limit',
     input: `$limit=10`,
-    expect: `SELECT ${star} LIMIT 0, 10`
+    expect: `SELECT ${star} LIMIT 10`
   }
 ]
