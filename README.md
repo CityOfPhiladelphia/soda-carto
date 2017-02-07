@@ -1,4 +1,5 @@
-# soda-carto
+# soda-carto [![Build
+Status](https://travis-ci.org/timwis/soda-carto.svg?branch=master)](https://travis-ci.org/timwis/soda-carto)
 Query [Carto](http://carto.com) datasets with a Socrata-style
 [SODA2](https://dev.socrata.com/docs/queries/) API
 
