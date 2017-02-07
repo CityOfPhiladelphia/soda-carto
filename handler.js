@@ -2,19 +2,35 @@
 const request = require('request')
 const convertRequest = require('./lib').convertRequest
 
-const endpoint = 'https://phl.carto.com/api/v2/'
+const endpoint = 'https://phl.carto.com/api/v2/sql'
 
 module.exports.soda = (event, context, callback) => {
   const query = event.queryStringParameters || {}
-  const opts = { dataset: event.pathParameters.dataset }
-  const sql = convertRequest(query, opts)
-  const cartoUrl = `${endpoint}sql?q=${encodeURIComponent(sql)}`
 
-  request(cartoUrl, (err, resp, body) => {
+  // Parse dataset and format from 's96x-w09z.json'
+  const resource = event.pathParameters.resource
+  const resourceParts = resource.split('.')
+  const dataset = resourceParts[0]
+  const format = resourceParts[1] || 'json'
+
+  // Convert soda request to SQL
+  const sodaOpts = { dataset: dataset }
+  if (format === 'csv') sodaOpts.geomFormat = 'wkt'
+  const sql = convertRequest(query, sodaOpts)
+
+  const requestOpts = {
+    uri: endpoint,
+    qs: {
+      q: sql,
+      format: format
+    }
+  }
+
+  console.log(requestOpts)
+
+  request(requestOpts, (err, resp, body) => {
     if (err) return callback(err)
 
-    // the lambda callback can't seem to handle all the properties that
-    // the request module returns in `resp`
     const response = {
       statusCode: resp.statusCode,
       body: resp.body

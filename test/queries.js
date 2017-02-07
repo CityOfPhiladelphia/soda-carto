@@ -89,5 +89,10 @@ module.exports = [
     label: 'limit',
     input: `$limit=10`,
     expect: `SELECT ${star} LIMIT 10`
+  },
+  {
+    label: 'offset',
+    input: `$limit=10&$offset=5`,
+    expect: `SELECT ${star} LIMIT 10 OFFSET 5`
   }
 ]

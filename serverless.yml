@@ -58,7 +58,7 @@ functions:
     handler: handler.soda
     timeout: 30
     events:
-      - http: GET resource/{dataset}
+      - http: GET resource/{resource}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
