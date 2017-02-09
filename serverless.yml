@@ -20,6 +20,8 @@ service: soda-carto
 provider:
   name: aws
   runtime: nodejs4.3
+  environment:
+    CARTO_DOMAIN: https://phl.carto.com
 
 # you can overwrite defaults here
 #  stage: dev

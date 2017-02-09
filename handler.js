@@ -1,8 +1,10 @@
 'use strict'
 const request = require('request')
+const url = require('url')
 const convertRequest = require('./lib').convertRequest
 
-const endpoint = 'https://phl.carto.com/api/v2/sql'
+const cartoDomain = process.env.CARTO_DOMAIN
+const endpoint = url.resolve(cartoDomain, '/api/v2/sql')
 
 module.exports.soda = (event, context, callback) => {
   const query = event.queryStringParameters || {}
