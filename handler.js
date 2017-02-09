@@ -13,6 +13,8 @@ module.exports.soda = (event, context, callback) => {
   const dataset = resourceParts[0]
   const format = resourceParts[1] || 'json'
 
+  console.log(resource, query)
+
   // Convert soda request to SQL
   const sodaOpts = { dataset: dataset }
   if (format === 'csv') sodaOpts.geomFormat = 'wkt'
@@ -36,6 +38,7 @@ module.exports.soda = (event, context, callback) => {
       body: resp.body
     }
 
+    console.log(`Status code: ${resp.statusCode}`)
     callback(null, response)
   })
 }
