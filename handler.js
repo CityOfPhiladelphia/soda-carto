@@ -1,6 +1,7 @@
 'use strict'
 const request = require('request')
 const url = require('url')
+const pick = require('lodash/pick')
 const convertRequest = require('./lib').convertRequest
 
 const cartoDomain = process.env.CARTO_DOMAIN
@@ -35,8 +36,14 @@ module.exports.soda = (event, context, callback) => {
   request(requestOpts, (err, response) => {
     if (err) return callback(err)
 
+    const headersToKeep = ['content-type', 'access-control-allow-origin', 'access-control-allow-headers']
     const payload = {
-      statusCode: response.statusCode
+      statusCode: response.statusCode,
+      headers: pick(response.headers, headersToKeep)
+    }
+    if (format !== 'json') {
+      // Only tell browser to download if it's not JSON
+      payload.headers['content-disposition'] = response.headers['content-disposition']
     }
 
     if (format === 'json' && response.statusCode === 200) {
