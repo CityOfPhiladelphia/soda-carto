@@ -32,15 +32,30 @@ module.exports.soda = (event, context, callback) => {
 
   console.log(requestOpts)
 
-  request(requestOpts, (err, resp, body) => {
+  request(requestOpts, (err, response) => {
     if (err) return callback(err)
 
-    const response = {
-      statusCode: resp.statusCode,
-      body: resp.body
+    const payload = {
+      statusCode: response.statusCode
     }
 
-    console.log(`Status code: ${resp.statusCode}`)
-    callback(null, response)
+    if (format === 'json' && response.statusCode === 200) {
+      payload.body = parseResponseRows(response.body)
+    } else {
+      // If statusCode !== 200, there's no rows property anyway
+      payload.body = response.body
+    }
+
+    console.log(`Status code: ${response.statusCode}`)
+    callback(null, payload)
   })
+}
+
+function parseResponseRows (body) {
+  try {
+    const parsedBody = JSON.parse(body)
+    return JSON.stringify(parsedBody.rows || parsedBody) // fallback if no rows property
+  } catch (e) {
+    console.error('Failed to parse response json')
+  }
 }
