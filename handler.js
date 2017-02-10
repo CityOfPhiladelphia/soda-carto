@@ -2,10 +2,13 @@
 const request = require('request')
 const url = require('url')
 const pick = require('lodash/pick')
+const fs = require('fs')
+const yaml = require('js-yaml')
 const convertRequest = require('./lib').convertRequest
 
 const cartoDomain = process.env.CARTO_DOMAIN
 const endpoint = url.resolve(cartoDomain, '/api/v2/sql')
+const datasets = loadDatasets('./datasets.yml')
 
 module.exports.soda = (event, context, callback) => {
   const query = event.queryStringParameters || {}
@@ -19,7 +22,8 @@ module.exports.soda = (event, context, callback) => {
   console.log(resource, query)
 
   // Convert soda request to SQL
-  const sodaOpts = { dataset: dataset }
+  const table = datasets[dataset] ? datasets[dataset].carto_table : dataset
+  const sodaOpts = { dataset: table }
   if (format === 'csv') sodaOpts.geomFormat = 'wkt'
   const sql = convertRequest(query, sodaOpts)
 
@@ -56,6 +60,14 @@ module.exports.soda = (event, context, callback) => {
     console.log(`Status code: ${response.statusCode}`)
     callback(null, payload)
   })
+}
+
+function loadDatasets (path) {
+  try {
+    return yaml.safeLoad(fs.readFileSync(path, 'utf8'))
+  } catch (e) {
+    console.error(`Error reading datasets.yml`)
+  }
 }
 
 function parseResponseRows (body) {

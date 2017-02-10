@@ -1,0 +1,3 @@
+sspu-uyfa:
+  carto_table: incidents_part1_part2
+  geometry_field: shape
