@@ -11,20 +11,22 @@ const endpoint = url.resolve(cartoDomain, '/api/v2/sql')
 const datasets = loadDatasets('./datasets.yml')
 
 module.exports.soda = (event, context, callback) => {
-  const query = event.queryStringParameters || {}
-
   // Parse dataset and format from 's96x-w09z.json'
   const resource = event.pathParameters.resource
   const resourceParts = resource.split('.')
   const dataset = resourceParts[0]
   const format = resourceParts[1] || 'json'
+  const query = event.queryStringParameters || {}
 
   console.log(resource, query)
 
   // Convert soda request to SQL
-  const table = datasets[dataset] ? datasets[dataset].carto_table : dataset
-  const sodaOpts = { dataset: table }
-  if (format === 'csv') sodaOpts.geomFormat = 'wkt'
+  const matchedDataset = datasets[dataset] || {}
+  const sodaOpts = {
+    dataset: matchedDataset.carto_table || dataset, // if no match, use as table name
+    geomAlias: matchedDataset.geometry_field || null, // defaults to the_geom_geojson
+    geomFormat: (format === 'csv') ? 'wkt' : null // defaults to geojson
+  }
   const sql = convertRequest(query, sodaOpts)
 
   const requestOpts = {
