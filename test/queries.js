@@ -1,4 +1,4 @@
-const star = '*, ST_AsGeoJSON(the_geom)::json AS the_geom'
+const star = '*, ST_AsGeoJSON(the_geom)::json AS the_geom_geojson'
 const limit = 'LIMIT 1000' // default limit per lib/index.js
 
 module.exports = [
