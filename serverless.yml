@@ -85,13 +85,34 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+resources:
+  Resources:
+    ProxyResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Fn::GetAtt:
+            - ApiGatewayRestApi # our default Rest API logical ID
+            - RootResourceId
+        PathPart: {proxy+} # the endpoint in your API that is set as proxy
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    ProxyMethod:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        ResourceId:
+          Ref: ProxyResource
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizationType: NONE
+        HttpMethod: GET # the method of your proxy. Is it GET or POST or ... ?
+        MethodResponses:
+          - StatusCode: 200
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: HTTP
+          Uri: https://phl.carto.com/api/v2/{proxy} # the URL you want to set a proxy to
+          IntegrationResponses:
+            - StatusCode: 200
+        RequestParameters:
+          Method.Request.QueryString.q: False
