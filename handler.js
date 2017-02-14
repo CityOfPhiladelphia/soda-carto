@@ -11,21 +11,16 @@ const endpoint = url.resolve(cartoDomain, '/api/v2/sql')
 const datasets = loadDatasets('./datasets.yml')
 
 module.exports.soda = (event, context, callback) => {
-  // Parse dataset and format from 's96x-w09z.json'
-  const resource = event.pathParameters.resource
-  const resourceParts = resource.split('.')
-  const dataset = resourceParts[0]
-  const format = resourceParts[1] || 'json'
+  const path = parsePath(event.pathParameters)
   const query = event.queryStringParameters || {}
-
-  console.log(resource, query)
+  console.log(event.pathParameters, query)
 
   // Convert soda request to SQL
-  const matchedDataset = datasets[dataset] || {}
+  const matchedDataset = datasets[path.dataset] || {}
   const sodaOpts = {
-    dataset: matchedDataset.carto_table || dataset, // if no match, use as table name
+    dataset: matchedDataset.carto_table || path.dataset, // if no match, use as table name
     geomAlias: matchedDataset.geometry_field || null, // defaults to the_geom_geojson
-    geomFormat: (format === 'csv') ? 'wkt' : null // defaults to geojson
+    geomFormat: (path.format === 'csv') ? 'wkt' : null // defaults to geojson
   }
   const sql = convertRequest(query, sodaOpts)
 
@@ -33,7 +28,7 @@ module.exports.soda = (event, context, callback) => {
     uri: endpoint,
     qs: {
       q: sql,
-      format: format
+      format: path.format
     }
   }
 
@@ -47,12 +42,12 @@ module.exports.soda = (event, context, callback) => {
       statusCode: response.statusCode,
       headers: pick(response.headers, headersToKeep)
     }
-    if (format !== 'json') {
+    if (path.format !== 'json') {
       // Only tell browser to download if it's not JSON
       payload.headers['content-disposition'] = response.headers['content-disposition']
     }
 
-    if (format === 'json' && response.statusCode === 200) {
+    if (path.format === 'json' && response.statusCode === 200) {
       payload.body = parseResponseRows(response.body)
     } else {
       // If statusCode !== 200, there's no rows property anyway
@@ -70,6 +65,20 @@ function loadDatasets (path) {
   } catch (e) {
     console.error(`Error reading datasets.yml`)
   }
+}
+
+// Parse dataset and format from 's96x-w09z.json' or 's96x-w09z' and 'rows.json'
+function parsePath (params) {
+  const parsed = {}
+  if (params.format) {
+    parsed.dataset = params.resource
+    parsed.format = params.format.replace('rows.', '') // remove prefix
+  } else {
+    const resourceParts = params.resource.split('.')
+    parsed.dataset = resourceParts[0]
+    parsed.format = resourceParts[1] || 'json'
+  }
+  return parsed
 }
 
 function parseResponseRows (body) {
