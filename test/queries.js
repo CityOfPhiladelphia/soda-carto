@@ -51,7 +51,7 @@ module.exports = [
   {
     label: 'where: named filters with where clause',
     input: `foo=1&$where=bar = 2`,
-    expect: `SELECT ${star} WHERE bar = 2 AND foo = 1 ${limit}`
+    expect: `SELECT ${star} WHERE bar = 2 AND foo = '1' ${limit}`
   },
   {
     label: 'where: within box',
