@@ -46,7 +46,7 @@ module.exports = [
   {
     label: 'where: named filters set types',
     input: `foo=1&bar=quz`,
-    expect: `SELECT ${star} WHERE foo = 1 AND bar = 'quz' ${limit}`
+    expect: `SELECT ${star} WHERE foo = '1' AND bar = 'quz' ${limit}`
   },
   {
     label: 'where: named filters with where clause',
