@@ -37,14 +37,17 @@ module.exports.soda = (event, context, callback) => {
   request(requestOpts, (err, response) => {
     if (err) return callback(err)
 
-    const headersToKeep = ['content-type', 'access-control-allow-origin', 'access-control-allow-headers']
-    const payload = {
-      statusCode: response.statusCode,
-      headers: pick(response.headers, headersToKeep)
-    }
+    const headers = pick(response.headers, ['content-type', 'access-control-allow-origin', 'access-control-allow-headers'])
+    headers['X-SODA-Carto-Query'] = sql // pass translated query for debug purposes
+
     if (path.format !== 'json') {
       // Only tell browser to download if it's not JSON
       payload.headers['content-disposition'] = response.headers['content-disposition']
+    }
+
+    const payload = {
+      statusCode: response.statusCode,
+      headers: headers
     }
 
     if (path.format === 'json' && response.statusCode === 200) {
