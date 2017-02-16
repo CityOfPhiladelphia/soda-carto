@@ -54,6 +54,11 @@ module.exports = [
     expect: `SELECT ${star} WHERE bar = 2 AND foo = '1' ${limit}`
   },
   {
+    label: 'where: named filters can contain inner quotes',
+    input: `foo=Philadelphia's district`,
+    expect: `SELECT ${star} WHERE foo = 'Philadelphia''s district' ${limit}`
+  },
+  {
     label: 'where: within box',
     input: `$where=within_box(geom, 47.5, -122.3, 47.5, -122.3)`,
     expect: `SELECT ${star} WHERE geom && ST_MakeEnvelope(47.5, -122.3, 47.5, -122.3, 4326) ${limit}`
