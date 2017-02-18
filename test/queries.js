@@ -46,12 +46,17 @@ module.exports = [
   {
     label: 'where: named filters set types',
     input: `foo=1&bar=quz`,
-    expect: `SELECT ${star} WHERE foo = 1 AND bar = 'quz' ${limit}`
+    expect: `SELECT ${star} WHERE foo = '1' AND bar = 'quz' ${limit}`
   },
   {
     label: 'where: named filters with where clause',
     input: `foo=1&$where=bar = 2`,
-    expect: `SELECT ${star} WHERE bar = 2 AND foo = 1 ${limit}`
+    expect: `SELECT ${star} WHERE bar = 2 AND foo = '1' ${limit}`
+  },
+  {
+    label: 'where: named filters can contain inner quotes',
+    input: `foo=Philadelphia's district`,
+    expect: `SELECT ${star} WHERE foo = 'Philadelphia''s district' ${limit}`
   },
   {
     label: 'where: within box',
