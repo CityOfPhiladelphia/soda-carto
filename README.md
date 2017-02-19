@@ -95,7 +95,7 @@ due to a shortcoming of the `node-sqlparser` library.
 | $select | average | `$select=avg(foo)` | auto |
 | $select | minimum | `$select=min(foo)` | auto |
 | $select | maximum | `$select=max(foo)` | auto |
-| $select | date truncation (y/ym/ymd) | `$select=date_trunc_ym(datetime) AS month` | [todo](issues/1) |
+| $select | date truncation (y/ym/ymd) | `$select=date_trunc_ym(datetime) AS month` | todo |
 | $select | convex_hull | `$select=convex_hull(location)` | supported |
 | $select | case | `$select=case(type = 'A', 'Full', type = 'B', 'Partial')` | supported |
 | $select | extent | `$select=extent(location)` | todo |
