@@ -76,6 +76,14 @@ parity between that and what AWS Lambda would show; we need to rewire
 `server.js` to simply delegate to `handler.js`.
 
 ## Feature support
+The below table outlines the specific features identified in the [SODA2
+docs](https://dev.socrata.com/docs/queries/). Features designated `auto` are
+already PostgreSQL-compliant, so their support can be taken for granted.
+Features marked `supported` have custom "translation" code written to make them
+PostgreSQL/Carto-compliant. Features marked "todo" should be possible, but
+require translation code to be written. Those marked "not supported" are likely
+due to a shortcoming of the `node-sqlparser` library.
+
 | category | feature | example | support |
 |----------|---------|---------|---------|
 | $select | all fields | `$select=*` | auto |
@@ -87,7 +95,7 @@ parity between that and what AWS Lambda would show; we need to rewire
 | $select | average | `$select=avg(foo)` | auto |
 | $select | minimum | `$select=min(foo)` | auto |
 | $select | maximum | `$select=max(foo)` | auto |
-| $select | date truncation (y/ym/ymd) | `$select=date_trunc_ym(datetime) AS month` | todo |
+| $select | date truncation (y/ym/ymd) | `$select=date_trunc_ym(datetime) AS month` | [todo](issues/1) |
 | $select | convex_hull | `$select=convex_hull(location)` | supported |
 | $select | case | `$select=case(type = 'A', 'Full', type = 'B', 'Partial')` | supported |
 | $select | extent | `$select=extent(location)` | todo |
@@ -128,7 +136,7 @@ parity between that and what AWS Lambda would show; we need to rewire
 | $q | multiple words are ANDed | `$q=test user` | todo |
 | $query | soql query | `$query=SELECT * WHERE foo = 'bar'` | todo |
 | $query | sub-query | `$query=SELECT city_feature, COUNT(*) AS count GROUP BY city_feature \| > SELECT COUNT(city_feature) AS num_types, SUM(count) AS total_features` | not supported |
-| $jsonp | jsonp callback | $`jsonp=callback` | todo |
+| $jsonp | jsonp callback | `$jsonp=callback` | todo |
 
 ## See also
 * [timothyclemansinsea/soql-for-cartodb](https://github.com/timothyclemansinsea/soql-for-cartodb)
