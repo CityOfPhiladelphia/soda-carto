@@ -82,7 +82,8 @@ already PostgreSQL-compliant, so their support can be taken for granted.
 Features marked `supported` have custom "translation" code written to make them
 PostgreSQL/Carto-compliant. Features marked "todo" should be possible, but
 require translation code to be written. Those marked "not supported" are likely
-due to a shortcoming of the `node-sqlparser` library.
+due to a shortcoming of the `node-sqlparser` library. Each feature should have a
+[test](test/index.js) written.
 
 | category | feature | example | support |
 |----------|---------|---------|---------|
