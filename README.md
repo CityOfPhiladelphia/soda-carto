@@ -75,6 +75,61 @@ There is also a local web server provided by `server.js`, but there isn't full
 parity between that and what AWS Lambda would show; we need to rewire
 `server.js` to simply delegate to `handler.js`.
 
+## Feature support
+| category | feature | example | support |
+|----------|---------|---------|---------|
+| $select | all fields | $select=* | auto |
+| $select | comma-separated fields | $select=foo, bar | auto |
+| $select | aliases | $select=foo AS bar | auto |
+| $select | operators | $select=foo * 2 AS double_foo | auto |
+| $select | count | $select=count(*) AS count | auto |
+| $select | sum | $select=sum(foo) AS total | auto |
+| $select | average | $select=avg(foo) | auto |
+| $select | minimum | $select=min(foo) | auto |
+| $select | maximum | $select=max(foo) | auto |
+| $select | date truncation (y/ym/ymd) | $select=date_trunc_ym(datetime) AS month | todo |
+| $select | convex_hull | $select=convex_hull(location) | supported |
+| $select | case | $select=case(type = 'A', 'Full', type = 'B', 'Partial') | supported |
+| $select | extent | $select=extent(location) | todo |
+| $select | simplify | $select=simplify(location, 0.001) | todo |
+| $select | number of vertices | $select=num_points(location) | todo |
+| $select | distance in meters | $select=distance_in_meters(location, 'POINT(-122.334540 47.59815)') AS range | todo |
+| $select | concatenate strings | $select=foo |  |
+| $where | equality expression | $where=foo = 'bar' | auto |
+| $where | AND operator | $where=foo = 'bar' AND baz = 2 | auto |
+| $where | parentheses | $where=foo = 'bar' AND (baz = 2 OR baz = 3) | auto |
+| $where | operators | $where=end - start < 3 | auto |
+| $where | simple filters | foo=bar&baz=1 | supported |
+| $where | simple filters with $where clause | foo=bar&$where=baz = 1 | supported |
+| $where | quotes within strings | $where=foo = 'bob''s burgers' | not supported |
+| $where | quotes within simple filters | $foo=bob's burgers | supported |
+| $where | boolean fields | $where=foo = true | auto |
+| $where | boolean fields short-hand | $where=foo | auto |
+| $where | in function | $where=foo in ('bar', 'baz') | auto |
+| $where | not in function | $where=foo not in ('bar', 'baz') | auto |
+| $where | between | $where=foo between '100' and '200' | auto |
+| $where | not between | $where=foo not between '100' and '200' | not supported |
+| $where | intersects | $where=intersects(location, 'POINT (-12.3, 45.6)') | todo |
+| $where | starts with | $where=starts_with(title, 'chief') | todo |
+| $where | within box | $where=within_box(location, 47.5, -122.3, 47.5, -122.3) | supported |
+| $where | within circle | $where=within_circle(location, 47.59815, -122.33454, 500) | supported |
+| $where | within polygon | $where=within_polygon(location, 'MULTIPOLYGON (((-87.637714 41.887275, -87.613681 41.886892, -87.625526 41.871555, -87.637714 41.887275)))') | supported |
+| $where | record updated | $where=:updated_at > '2017-02-19' | not supported |
+| $order | order by | $order=foo | auto |
+| $order | order by with direction | $order=foo DESC | auto |
+| $group | group by | $group=foo | auto |
+| $group | group by truncated date | $group=date_trunc_ym(datetime) | todo |
+| $having | having | $select=count(*) AS count&$group=bar&$having=count > 20 | todo |
+| $limit | limit | $limit=10 | auto |
+| $limit | default limit of 1000 | $select=foo | supported |
+| $offset | offset | $offset=5 | auto |
+| $q | full-text search | $q=foo | todo |
+| $q | stemming | $q=users | not supported |
+| $q | multiple words are ANDed | $q=test user | todo |
+| $query | soql query | $query=SELECT * WHERE foo = 'bar' | todo |
+| $query | sub-query | $query=SELECT city_feature, COUNT(*) AS count GROUP BY city_feature | > SELECT COUNT(city_feature) AS num_types, SUM(count) AS total_features |
+| $jsonp | jsonp callback | $jsonp=callback | todo |
+
 ## See also
 * [timothyclemansinsea/soql-for-cartodb](https://github.com/timothyclemansinsea/soql-for-cartodb)
 
