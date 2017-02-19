@@ -140,6 +140,22 @@ test.skip('$select: concatenate strings', (t) => {
   t.equal(output, expect)
 })
 
+test('$select: geometry field alias', (t) => {
+  t.plan(1)
+  const input = `$select=*`
+  const expect = `SELECT *, ST_AsGeoJSON(the_geom)::json AS location ${limit}`
+  const output = convert(input, { geomAlias: 'location' })
+  t.equal(output, expect)
+})
+
+test('$select: geometry field alias replaced in functions', (t) => {
+  t.plan(1)
+  const input = `$select=convex_hull(location)`
+  const expect = `SELECT ST_ConvexHull(ST_Collect(the_geom)) ${limit}`
+  const output = convert(input, { geomAlias: 'location' })
+  t.equal(output, expect)
+})
+
 test('$where: equality expression', (t) => {
   t.plan(1)
   const input = `$where=foo = 'bar'`
@@ -297,6 +313,14 @@ test.skip('$where: record updated', (t) => {
   const input = `$where=:updated_at > '2017-02-19' ${limit}`
   const expect = ``
   const output = convert(input)
+  t.equal(output, expect)
+})
+
+test('$where: geometry field alias replaced in function', (t) => {
+  t.plan(1)
+  const input = `$select=foo&$where=within_circle(location, 47.59815, -122.33454, 500)`
+  const expect = `SELECT foo WHERE ST_Point_Inside_Circle(the_geom, 47.59815, -122.33454, 0.005) ${limit}`
+  const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
 
