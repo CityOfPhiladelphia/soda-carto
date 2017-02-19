@@ -102,7 +102,9 @@ resources:
           Fn::GetAtt:
             - ApiGatewayRestApi # our default Rest API logical ID
             - RootResourceId
-        PathPart: {proxy+} # the endpoint in your API that is set as proxy
+            # - ApiGatewayResourceApi # what serverless will call the "/api" resource
+          # Ref: ApiGatewayResourceApi # what serverless will call the "/api" resource
+        PathPart: '{proxy+}' # the endpoint in your API that is set as proxy
         RestApiId:
           Ref: ApiGatewayRestApi
     ProxyMethod:
@@ -123,4 +125,4 @@ resources:
           IntegrationResponses:
             - StatusCode: 200
         RequestParameters:
-          Method.Request.QueryString.q: False
+          integration.request.path.proxy: proxy
