@@ -295,7 +295,7 @@ test('$where: within box', (t) => {
 test('$where: within circle', (t) => {
   t.plan(1)
   const input = `$where=within_circle(location, 47.59815, -122.33454, 500)`
-  const expect = `SELECT ${star} WHERE ST_Point_Inside_Circle(the_geom, 47.59815, -122.33454, 0.005) ${limit}`
+  const expect = `SELECT ${star} WHERE ST_DWithin(the_geom::geography, ST_GeographyFromText('POINT(-122.33454 47.59815)'), 500) ${limit}`
   const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
