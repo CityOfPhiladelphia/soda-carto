@@ -93,13 +93,46 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+resources:
+  Resources:
+    ProxyParentResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Fn::GetAtt:
+            - ApiGatewayRestApi # serverless default Rest API logical ID
+            - RootResourceId
+        PathPart: 'carto'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    ProxyResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Ref: ProxyParentResource
+        PathPart: '{proxy+}' # the endpoint in your API that is set as proxy
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    ProxyMethod:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        ResourceId:
+          Ref: ProxyResource
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizationType: NONE
+        HttpMethod: GET # the method of your proxy. Is it GET or POST or ... ?
+        MethodResponses:
+          - StatusCode: 200
+        RequestParameters:
+          method.request.path.proxy: true
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: HTTP_PROXY
+          Uri: https://phl.carto.com/{proxy} # the URL you want to set a proxy to
+          IntegrationResponses:
+            - StatusCode: 200
+          RequestParameters:
+            integration.request.path.proxy: method.request.path.proxy
+            integration.request.header.Accept-Encoding: "'identity'"
+          PassthroughBehavior: WHEN_NO_MATCH
