@@ -95,15 +95,21 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-    ProxyResource:
+    ProxyParentResource:
       Type: AWS::ApiGateway::Resource
       Properties:
         ParentId:
           Fn::GetAtt:
-            - ApiGatewayRestApi # our default Rest API logical ID
+            - ApiGatewayRestApi # serverless default Rest API logical ID
             - RootResourceId
-            # - ApiGatewayResourceApi # what serverless will call the "/api" resource
-          # Ref: ApiGatewayResourceApi # what serverless will call the "/api" resource
+        PathPart: 'carto'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    ProxyResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Ref: ProxyParentResource
         PathPart: '{proxy+}' # the endpoint in your API that is set as proxy
         RestApiId:
           Ref: ApiGatewayRestApi
@@ -118,11 +124,15 @@ resources:
         HttpMethod: GET # the method of your proxy. Is it GET or POST or ... ?
         MethodResponses:
           - StatusCode: 200
+        RequestParameters:
+          method.request.path.proxy: true
         Integration:
           IntegrationHttpMethod: GET
-          Type: HTTP
-          Uri: https://phl.carto.com/api/v2/{proxy} # the URL you want to set a proxy to
+          Type: HTTP_PROXY
+          Uri: https://phl.carto.com/{proxy} # the URL you want to set a proxy to
           IntegrationResponses:
             - StatusCode: 200
-        RequestParameters:
-          integration.request.path.proxy: proxy
+          RequestParameters:
+            integration.request.path.proxy: method.request.path.proxy
+            integration.request.header.Accept-Encoding: "'identity'"
+          PassthroughBehavior: WHEN_NO_MATCH
