@@ -2,3 +2,7 @@ node_modules
 *.swp
 .env
 .serverless
+
+# Mac
+._*
+.DS_Store

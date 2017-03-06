@@ -20,14 +20,17 @@
   "author": "timwis <tim@timwis.com>",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.1.5",
     "dotenv": "^2.0.0",
     "from2-string": "^1.1.0",
     "js-yaml": "^3.8.1",
+    "knuth-shuffle": "^1.0.1",
     "lodash": "^4.17.4",
     "node-soda2-parser": "^2.1.0",
     "npm-watch": "^0.1.7",
     "request": "^2.76.0",
-    "server-router": "^3.0.0"
+    "server-router": "^3.0.0",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "tap-spec": "^4.1.1",

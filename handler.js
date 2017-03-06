@@ -42,6 +42,7 @@ module.exports.soda = (event, context, callback) => {
 
     if (path.format !== 'json') {
       // Only tell browser to download if it's not JSON
+      // TODO: !!!! has not been defined
       payload.headers['content-disposition'] = response.headers['content-disposition']
     }
 

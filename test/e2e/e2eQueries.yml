@@ -1,0 +1,6 @@
+socrata:
+  - dataset: sspu-uyfa
+    query:
+      $limit: 10
+carto:
+  - SELECT * FROM phl.li_violations LIMIT 10
