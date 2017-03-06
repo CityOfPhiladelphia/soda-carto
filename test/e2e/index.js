@@ -3,7 +3,8 @@ const async = require('async'),
       yaml = require('js-yaml'),
       fs = require('fs'),
       winston = require('winston'),
-      shuffle = require('knuth-shuffle').knuthShuffle
+      shuffle = require('knuth-shuffle').knuthShuffle,
+      assert = require('assert')
 
 const concurrency = 1
 const maxNon200 = 5
@@ -154,6 +155,24 @@ function socrataTests(testQueriesRaw) {
   })
   testQueries = shuffle(testQueries)
 
+  function compareDatasets(socrata, carto) {
+    socrata = JSON.parse(socrata)
+    carto = JSON.parse(carto)
+    assert(socrata.length == carto.length)
+    for (var i in socrata) {
+      console.log(socrata[i])
+      console.log(carto[i])
+      Object.keys(socrata[i]).forEach(function (socrataKey) {
+        assert(socrataKey in carto[i], '`' + socrataKey + '` not in carto')
+        socrataType = typeof socrata[i][socrataKey]
+        cartoType = typeof carto[i][socrataKey]
+        assert(socrataType == cartoType, 
+              '`' + socrataKey + '` type mismatch socrata: ' +
+              socrataType + ' carto: ' + cartoType)
+      })
+    }
+  }
+
   function runQuery(query, callback) {
     async.series({
       socrata: function (callback) {
@@ -180,13 +199,15 @@ function socrataTests(testQueriesRaw) {
           if (non200Count >= maxNon200)
             callback('Max non-200 response reached')
 
-          // TODO: save body to temp file for comparison
+          // TODO: use stream?
+          // TODO: save body to temp file for comparison?
 
           callback(null, {
             type: query.type,
             status: status,
             bytes: bytes,
-            timing: end - start
+            timing: end - start,
+            body: body
           })
         })
       },
@@ -202,8 +223,6 @@ function socrataTests(testQueriesRaw) {
         request(options, function (err, res, body) {
           if (err) return callback(err)
 
-          console.log(body)
-
           var end = Date.now()
 
           var status = res.statusCode, bytes = body.length
@@ -216,21 +235,27 @@ function socrataTests(testQueriesRaw) {
           if (non200Count >= maxNon200)
             callback('Max non-200 response reached')
 
-          // TODO: save body to temp file for comparison
+          // TODO: use stream?
+          // TODO: save body to temp file for comparison?
 
           callback(null, {
             type: query.type,
             status: status,
             bytes: bytes,
-            timing: end - start
+            timing: end - start,
+            body: body
           })
         })
       }
     },
-    function (err, stats) {
+    function (err, results) {
       if (err) return callback(err)
 
-      console.log(stats)
+      // console.log(results)
+
+      compareDatasets(results.socrata.body,results.carto.body)
+
+      // TODO: del body and pass results to callback
 
       callback()
     })
@@ -239,6 +264,7 @@ function socrataTests(testQueriesRaw) {
   function reportResults(err, rawStats) {
     if (err) return logger.error(err)
 
+    // TODO: fix this
     //reportRequestStats(rawStats)
   }
 
@@ -251,7 +277,7 @@ function socrataTests(testQueriesRaw) {
 function main() {
   logger.info('Loading query yaml file')
 
-  var testQueriesRaw = yaml.safeLoad(fs.readFileSync('e2eQueries.yml', 'utf8'));
+  var testQueriesRaw = yaml.safeLoad(fs.readFileSync(__dirname + '/e2eQueries.yml', 'utf8'));
 
   //gatewayTests(testQueriesRaw)
 
