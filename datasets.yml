@@ -1,3 +1,226 @@
+# aspatial 
+
+ds7g-p84b:
+  carto_table: oeo_registry
+  
+k2vk-qs71:
+  carto_table: air_quality_index_days
+
+hq7x-bem5:
+  carto_table: pwd_customer_service_calls
+
+84k6-nu6e:
+  carto_table: parking_meter_and_kiosk_inventory
+
+8td4-redg:
+  carto_table: business_security_camera_program_grants
+
+8qmh-bvue:
+  carto_table: red_light_camera_locations
+
+rmbh-e83k:
+  carto_table: election_worker_general
+
+49pj-qcp4:
+  carto_table: voter_turnout_special_election_2015
+
+fpmf-whei:
+  carto_table: voter_turnout_primary_election_2015
+
+ykdd-f2ye:
+  carto_table: voter_turnout_general_election_2014
+
+i4f2-nk9j:
+  carto_table: retrofitted_homes
+
+66tr-i72h:
+  carto_table: recreational_activity_list
+
+wkpd-bgt5:
+  carto_table: valet_parking_locations
+
+rb74-ti7f:
+  carto_table: qualified_voter_listing_2015_special_election
+        
+g4jp-m82n:
+  carto_table: qualified_voter_listing_2015_primary_election
+
+8e8w-cngk:
+  carto_table: qualified_voter_listing_2014_general_election
+
+uh2i-fwr3:
+  carto_table: operating_budget_fy_2015_adopted
+
+8jn6-dd87:
+  carto_table: operating_budget_fy_2015_current_estimate
+
+rg4f-4ktd:
+  carto_table: operating_budget_fy_2016_proposed
+
+6quj-54t7:
+  carto_table:  operating_budget_fy_2016_adopted
+
+8gvb-vyxn:
+  carto_table: operating_budget_fy_2017_proposed
+
+v8mx-vw4d:
+  carto_table: instore_forgivable_loan_program
+
+2892-gwk8:
+  carto_table: homes_saved
+
+hyyq-4zdv:
+  carto_table: stormwater_grants
+
+xgeq-dez5:
+  carto_table: snow_emergency_routes
+
+nm2v-xucf:
+  carto_table: active_residential_parking_permits_by_district 
+
+tfvf-544t:
+  carto_table: li_trade_licenses
+
+st4m-d4h3:
+  carto_table: li_business_licenses
+
+rdvp-pwxt:
+  carto_table: li_com_act_licenses
+
+bdk5-ywgb:
+  carto_table: eop_private_np
+
+39kk-pssk:
+  carto_table: eop_ohcd_pidc
+
+xr86-qjxm:
+  carto_table: eop_avi_nonpubworks_pubprop_streets_water
+
+vy9b-w2mc:
+  carto_table: energy_usage_large_commercial_buildings_not_reported_2014
+
+rxi8-wx2m:
+  carto_table: energy_usage_large_commercial_buildings_reported_2014
+
+hcm9-n3mq:
+  carto_table: energy_usage_city_owned_buildings_2012
+
+hezk-qta3:
+  carto_table: elected-committeepeople
+
+npdr-96qp:
+  carto_table: property_assessments
+
+# spatial
+
 sspu-uyfa:
   carto_table: pol_incidents_part1_part2
   geometry_field: shape
+
+xtnp-ykmq:
+  carto_table: energy_usage_large_commercial_buildings_reported_2013
+  geometry_field: geom
+
+nzzt-3rxf:
+  carto_table: energy_usage_large_commercial_buildings_not_reported_2013
+  geometry_field: shape
+
+d4zn-gjfu:
+  carto_table: energy_usage_city_owned_buildings_2011
+  geometry_field: location
+
+rzdq-w22a:
+  carto_table: energy_usage_city_owned_buildings_2014
+  geometry_field: location
+
+rxqp-mnap:
+  carto_table: energy_usage_city_owned_buildings_2013
+  geometry_field: location 
+
+rfqf-rik2:
+  carto_table: li_clean_seal
+  geometry_field: location
+
+wu7j-iws6:
+  carto_table: car_ped_stops
+  geometry_field: location
+
+jr6a-ctmq:
+  cart_table: shootings
+  geometry_field: shape
+
+fypy-ek77:
+  carto_table: li_case_inspections
+  geometry_field: location
+
+87ia-xyda:
+  carto_table: li_imm_dang
+  geometry_field: location
+
+53tz-wgpy:
+  carto_table: li_unsafe
+  geometry_field: location
+
+3tq7-6fj4:
+  carto_table: li_appeals
+  geometry_field: location
+
+ri7j-zssm:
+  carto_table: li_serv_req
+  geometry_field: location
+
+uukf-7jf3:
+  carto_table: li_permits
+  geometry_field: location
+
+cctq-fx48:
+  carto_table: li_violations
+  geometry_field: location
+
+5g3z-ynfm:
+  carto_table: streets_code_violations_notices
+  geometry_field: coordinates
+
+s8fg-82z8:
+  carto_table: vacant_lot_cleanups
+  geometry_field: location
+
+b296-e29w:
+  carto_table: exterior_violation_cleanups
+  geometry_field: geom
+
+gq98-cqqu:
+  carto_table: recyclebank_participation
+  geometry_field: location
+
+4t9v-rppq:
+  carto_table: cases 
+  geometry_field: location
+
+y5ti-svsu:
+  carto_table: real_estate_tax_balances
+  geometry_field: location
+
+gukg-kbct:
+  carto_table: wastebaskets_big_belly
+  geometry_field: location
+
+wgjz-gmue:
+  carto_table: bike_racks
+  geometry_field: geom
+
+w7rb-qrn8:
+  carto_table: opa_properties_public
+  geometry_field: shape
+
+6tns-3zss:
+  carto_table: residential_parking_permit_blocks
+  geometry_field: location
+
+q74c-mg57:
+  carto_table: big_belly_trash_bin_usage
+  geometry_field: geom
+
+
+
+
