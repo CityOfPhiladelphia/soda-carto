@@ -3,7 +3,7 @@
 ds7g-p84b:
   carto_table: oeo_registry
   
-k2vk-qs71:
+k2vk-qs7i:
   carto_table: air_quality_index_days
 
 hq7x-bem5:
@@ -97,7 +97,7 @@ xr86-qjxm:
   carto_table: eop_avi_nonpubworks_pubprop_streets_water
 
 vy9b-w2mc:
-  carto_table: energy_usage_large_commercial_buildings_not_reported_2014
+  carto_table: large_building_energy_not_reported_2014
 
 rxi8-wx2m:
   carto_table: energy_usage_large_commercial_buildings_reported_2014
@@ -106,7 +106,7 @@ hcm9-n3mq:
   carto_table: energy_usage_city_owned_buildings_2012
 
 hezk-qta3:
-  carto_table: elected-committeepeople
+  carto_table: elected_committee_people
 
 npdr-96qp:
   carto_table: property_assessments
