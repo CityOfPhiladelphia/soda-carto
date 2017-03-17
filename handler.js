@@ -40,15 +40,14 @@ module.exports.soda = (event, context, callback) => {
     const headers = pick(response.headers, ['content-type', 'access-control-allow-origin', 'access-control-allow-headers'])
     headers['X-SODA-Carto-Query'] = sql // pass translated query for debug purposes
 
-    if (path.format !== 'json') {
-      // Only tell browser to download if it's not JSON
-      // TODO: !!!! has not been defined
-      payload.headers['content-disposition'] = response.headers['content-disposition']
-    }
-
     const payload = {
       statusCode: response.statusCode,
       headers: headers
+    }
+
+    if (path.format !== 'json') {
+      // Only tell browser to download if it's not JSON
+      payload.headers['content-disposition'] = response.headers['content-disposition']
     }
 
     if (path.format === 'json' && response.statusCode === 200) {
@@ -88,8 +87,18 @@ function parsePath (params) {
 function parseResponseRows (body) {
   try {
     const parsedBody = JSON.parse(body)
-    return JSON.stringify(parsedBody.rows || parsedBody) // fallback if no rows property
+    return JSON.stringify(numbersToStrings(parsedBody.rows || parsedBody)) // fallback if no rows property
   } catch (e) {
     console.error('Failed to parse response json')
   }
+}
+
+function numbersToStrings (rows) {
+  for (var i in rows) {
+    for (var k in rows[i]) {
+      if (typeof rows[i][k] == 'number')
+        rows[i][k] = rows[i][k].toString()
+    }
+  }
+  return rows
 }
