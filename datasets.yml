@@ -106,7 +106,7 @@ hcm9-n3mq:
   carto_table: energy_usage_city_owned_buildings_2012
 
 hezk-qta3:
-  carto_table: elected-committeepeople
+  carto_table: elected_committee_people
 
 npdr-96qp:
   carto_table: property_assessments
