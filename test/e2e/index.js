@@ -37,7 +37,7 @@ function bucketStatus(status) {
   throw Exception('Unkown status: ' + status)
 }
 
-function reportRequestStats(rawStats) {
+function reportRequestStats(name, rawStats) {
   count = rawStats.length
 
   stats = rawStats.reduce(function (acc, row) {
@@ -62,7 +62,8 @@ function reportRequestStats(rawStats) {
   stats.avg_bytes_per_ms = stats.avg_bytes_per_ms_acc / count
   stats.avg_time_elapsed = stats.avg_time_elapsed_acc / count
 
-  logger.info('200s: %d, 300s: %d, 400s: %d, 500s: %d, avg bytes/ms: %d, avg time (ms) %d, total bytes: %d',
+  logger.info('%s - 200s: %d, 300s: %d, 400s: %d, 500s: %d, avg bytes/ms: %d, avg time (ms) %d, total bytes: %d',
+              name,
               stats['2xxs'],
               stats['3xxs'],
               stats['4xxs'],
@@ -119,8 +120,8 @@ function gatewayTests(testQueriesRaw) {
       if (status != 200)
         non200Count++
 
-      if (non200Count >= maxNon200)
-        callback('Max non-200 response reached')
+      // if (non200Count >= maxNon200)
+      //   callback('Max non-200 response reached')
 
       callback(null, {
         type: query.type,
@@ -134,7 +135,7 @@ function gatewayTests(testQueriesRaw) {
   function reportResults(err, rawStats) {
     if (err) return logger.error(err)
 
-    reportRequestStats(rawStats)
+    reportRequestStats('gateway', rawStats)
   }
 
   async.mapLimit(testQueries,
@@ -146,34 +147,72 @@ function gatewayTests(testQueriesRaw) {
 function socrataTests(testQueriesRaw) {
   logger.info('Executing Scorata comparison test queries')
 
-  non200Count = 0
+  var datasets = yaml.safeLoad(fs.readFileSync(__dirname + '/../../datasets.yml', 'utf8'));
 
   var testQueries = []
-  testQueriesRaw.socrata.forEach(function (query) {
-    query.type = 'socrata'
-    testQueries.push(query)
-  })
-  testQueries = shuffle(testQueries)
+  for (var dataset in datasets) {
+    testQueries.push({
+      type: 'socrata',
+      dataset: dataset,
+      query: {
+        $limit: 10
+      }
+    })
+  }
 
-  function compareDatasets(socrata, carto) {
+  non200Count = 0
+
+  // var testQueries = []
+  // testQueriesRaw.socrata.forEach(function (query) {
+  //   query.type = 'socrata'
+  //   testQueries.push(query)
+  // })
+  // testQueries = shuffle(testQueries)
+
+  function compareDatasets(socrataKey, socrata, carto) {
+    if (socrata == undefined || socrata == '') {
+      logger.error('socrata undefined')
+      return
+    }
+    if (carto == undefined || carto == '') {
+      logger.error('carto undefined')
+      return
+    }
     socrata = JSON.parse(socrata)
     carto = JSON.parse(carto)
-    assert(socrata.length == carto.length)
+    logger.info(socrata)
+    logger.info(carto)
+    if (socrata == undefined) {
+      logger.error('socrata undefined')
+      return
+    }
+    if (carto == undefined) {
+      logger.error('carto undefined')
+      return
+    }
+    if (socrata.length != carto.length) {
+      logger.error('`' + socrataKey + '` length is not the same ' +
+        socrata.length + ' - ' + carto.length)
+      return
+    }
     for (var i in socrata) {
-      console.log(socrata[i])
-      console.log(carto[i])
+      // console.log(socrata[i])
+      // console.log(carto[i])
       Object.keys(socrata[i]).forEach(function (socrataKey) {
-        assert(socrataKey in carto[i], '`' + socrataKey + '` not in carto')
+        if (!socrataKey in carto[i])
+          logger.error('`' + socrataKey + '` not in carto')
         socrataType = typeof socrata[i][socrataKey]
         cartoType = typeof carto[i][socrataKey]
-        assert(socrataType == cartoType, 
-              '`' + socrataKey + '` type mismatch socrata: ' +
-              socrataType + ' carto: ' + cartoType)
+        if (socrata[i][socrataKey] != null && carto[i][socrataKey] != null && socrataType != cartoType)
+          logger.error('`' + socrataKey + '` type mismatch socrata: ' + socrata[i][socrataKey] + ' (' +
+                       socrataType + ') carto: ' + carto[i][socrataKey] + ' (' + cartoType + ')')
       })
     }
   }
 
   function runQuery(query, callback) {
+    logger.info('Testing dataset: ' + query.dataset)
+
     async.series({
       socrata: function (callback) {
         options = {
@@ -196,8 +235,8 @@ function socrataTests(testQueriesRaw) {
           if (status != 200)
             non200Count++
 
-          if (non200Count >= maxNon200)
-            callback('Max non-200 response reached')
+          // if (non200Count >= maxNon200)
+          //   callback('Max non-200 response reached')
 
           // TODO: use stream?
           // TODO: save body to temp file for comparison?
@@ -232,8 +271,8 @@ function socrataTests(testQueriesRaw) {
           if (status != 200)
             non200Count++
 
-          if (non200Count >= maxNon200)
-            callback('Max non-200 response reached')
+          // if (non200Count >= maxNon200)
+          //   callback('Max non-200 response reached')
 
           // TODO: use stream?
           // TODO: save body to temp file for comparison?
@@ -251,21 +290,32 @@ function socrataTests(testQueriesRaw) {
     function (err, results) {
       if (err) return callback(err)
 
-      // console.log(results)
+      compareDatasets(query.dataset, results.socrata.body,results.carto.body)
 
-      compareDatasets(results.socrata.body,results.carto.body)
+      delete results.socrata.body
+      delete results.carto.body
 
-      // TODO: del body and pass results to callback
-
-      callback()
+      callback(err, results)
     })
   }
 
-  function reportResults(err, rawStats) {
+  function reportResults(err, results) {
     if (err) return logger.error(err)
 
-    // TODO: fix this
-    //reportRequestStats(rawStats)
+    console.log(results)
+
+    groupedResults = results.reduce({}, function (result) {
+      acc.socrata.push(result.socrata)
+      acc.carto.push(result.carto)
+      return acc
+    },
+    {
+      socrata: [],
+      carto: []
+    })
+
+    reportRequestStats('converter socrata', groupedResults.socrata)
+    reportRequestStats('converter carto', groupedResults.cart)
   }
 
   async.mapLimit(testQueries,
@@ -281,8 +331,10 @@ function main() {
 
   //gatewayTests(testQueriesRaw)
 
-  if (testQueriesRaw.socrata)
-    socrataTests(testQueriesRaw)
+  // if (testQueriesRaw.socrata)
+  //   socrataTests(testQueriesRaw)
+
+  socrataTests()
 }
 
 main()

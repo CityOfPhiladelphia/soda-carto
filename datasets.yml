@@ -146,7 +146,7 @@ wu7j-iws6:
   geometry_field: shape
 
 jr6a-ctmq:
-  cart_table: shootings
+  carto_table: shootings
   geometry_field: shape
 
 fypy-ek77:
@@ -178,7 +178,7 @@ cctq-fx48:
   geometry_field: location
 
 5g3z-ynfm:
-  carto_table: streets_code_violations_notices
+  carto_table: streets_code_violation_notices
   geometry_field: coordinates
 
 s8fg-82z8:
