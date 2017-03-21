@@ -114,7 +114,7 @@ npdr-96qp:
 # spatial
 
 sspu-uyfa:
-  carto_table: pol_incidents_part1_part2
+  carto_table: incidents_part1_part2
   geometry_field: shape
 
 xtnp-ykmq:
@@ -143,7 +143,7 @@ rfqf-rik2:
 
 wu7j-iws6:
   carto_table: car_ped_stops
-  geometry_field: location
+  geometry_field: shape
 
 jr6a-ctmq:
   cart_table: shootings
@@ -199,7 +199,7 @@ gq98-cqqu:
 
 y5ti-svsu:
   carto_table: real_estate_tax_balances
-  geometry_field: location
+  geometry_field: coordinates
 
 gukg-kbct:
   carto_table: wastebaskets_big_belly
