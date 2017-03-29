@@ -119,7 +119,7 @@ test.skip('$select: simplify', (t) => {
 test.skip('$select: number of vertices', (t) => {
   t.plan(1)
   const input = `$select=num_points(location)`
-  const expect = `SELECT ST_NumPoints(the_geom) ${limit}`
+  const expect = `SELECT ST_NPoints(the_geom) ${limit}`
   const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
@@ -127,7 +127,7 @@ test.skip('$select: number of vertices', (t) => {
 test.skip('$select: distance in meters', (t) => {
   t.plan(1)
   const input = `$select=distance_in_meters(location, 'POINT(-122.334540 47.59815)') AS range`
-  const expect = `SELECT ST_Distance(the_geom, 'POINT(-122.334540 47.59815)') AS range ${limit}`
+  const expect = `SELECT ST_Distance(the_geom::geography, ST_GeographyFromText('POINT(-122.334540 47.59815)')) AS range ${limit}`
   const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
@@ -271,7 +271,7 @@ test.skip('$where: not between', (t) => {
 test.skip('$where: intersects', (t) => {
   t.plan(1)
   const input = `$where=intersects(location, 'POINT (-12.3, 45.6)')`
-  const expect = `SELECT ${star} WHERE ST_Intersects(the_geom, 'POINT (-12.3, 45.6)') ${limit}`
+  const expect = `SELECT ${star} WHERE ST_Intersects(the_geom, 'POINT (-12.3, 45.6)'::geometry) ${limit}`
   const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
@@ -286,8 +286,8 @@ test.skip('$where: starts with', (t) => {
 
 test('$where: within box', (t) => {
   t.plan(1)
-  const input = `$where=within_box(location, 47.5, -122.3, 47.5, -122.3)`
-  const expect = `SELECT ${star} WHERE the_geom && ST_MakeEnvelope(47.5, -122.3, 47.5, -122.3, 4326) ${limit}`
+  const input = `$where=within_box(location, 47.6, -122.4, 47.4, -122.2)` //socrata is noncompliant in order, NWlat (ymax), NWlon (xmax), SElat (ymin), SElon (xmin)
+  const expect = `SELECT ${star} WHERE the_geom && ST_MakeEnvelope(-122.2, 47.4, -122.4, 47.6, 4326) ${limit}` //this is tricky, PostGIS takes OGC-compliant xmin, ymin, xmax, ymax order
   const output = convert(input, { geomAlias: 'location' })
   t.equal(output, expect)
 })
