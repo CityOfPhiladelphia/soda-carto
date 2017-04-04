@@ -30,6 +30,7 @@
     "npm-watch": "^0.1.7",
     "request": "^2.76.0",
     "server-router": "^3.0.0",
+    "to-xml": "^0.1.4",
     "winston": "^2.3.1"
   },
   "devDependencies": {
