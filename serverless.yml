@@ -95,6 +95,7 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
+    # Carto API pass-through
     ProxyParentResource:
       Type: AWS::ApiGateway::Resource
       Properties:
@@ -135,4 +136,46 @@ resources:
           RequestParameters:
             integration.request.path.proxy: method.request.path.proxy
             integration.request.header.Accept-Encoding: "'identity'"
+          PassthroughBehavior: WHEN_NO_MATCH
+
+    # VizWit Pages pass-through
+    VisualizationsProxyParentResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Fn::GetAtt:
+            - ApiGatewayRestApi # serverless default Rest API logical ID
+            - RootResourceId
+        PathPart: 'visualizations'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    VisualizationsProxyResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Ref: VisualizationsProxyParentResource
+        PathPart: '{proxy+}' # the endpoint in your API that is set as proxy
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    VisualizationsProxyMethod:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        ResourceId:
+          Ref: VisualizationsProxyResource
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizationType: NONE
+        HttpMethod: GET # the method of your proxy. Is it GET or POST or ... ?
+        MethodResponses:
+          - StatusCode: 200
+        RequestParameters:
+          method.request.path.proxy: true
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: HTTP_PROXY
+          Uri: https://cityofphiladelphia.github.io/vizwit-pages/{proxy} # the URL you want to set a proxy to
+          IntegrationResponses:
+            - StatusCode: 200
+          RequestParameters:
+            integration.request.path.proxy: method.request.path.proxy
           PassthroughBehavior: WHEN_NO_MATCH
