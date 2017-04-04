@@ -4,6 +4,7 @@ const url = require('url')
 const pick = require('lodash/pick')
 const fs = require('fs')
 const yaml = require('js-yaml')
+const xml = require('to-xml').toXML
 const convertRequest = require('./lib').convertRequest
 
 const cartoDomain = process.env.CARTO_DOMAIN
@@ -17,10 +18,12 @@ module.exports.soda = (event, context, callback) => {
 
   // Convert soda request to SQL
   const matchedDataset = datasets[path.dataset] || {}
+  const geomFormat = (path.format === 'csv' || path.format === 'xml') ? 'wkt' : null // defaults to geojson
+  const requestFormat = (path.format === 'xml') ? 'json' : path.format // only change this if it's xml
   const sodaOpts = {
     dataset: matchedDataset.carto_table || path.dataset, // if no match, use as table name
     geomAlias: matchedDataset.geometry_field || null, // defaults to the_geom_geojson
-    geomFormat: (path.format === 'csv') ? 'wkt' : null // defaults to geojson
+    geomFormat: geomFormat
   }
   const sql = convertRequest(query, sodaOpts)
 
@@ -28,7 +31,7 @@ module.exports.soda = (event, context, callback) => {
     uri: endpoint,
     qs: {
       q: sql,
-      format: path.format
+      format: requestFormat
     }
   }
 
@@ -45,13 +48,23 @@ module.exports.soda = (event, context, callback) => {
       headers: headers
     }
 
-    if (path.format !== 'json') {
-      // Only tell browser to download if it's not JSON
+    if (path.format !== 'json' && path.format !== 'xml') {
+      // Only tell browser to download if it's not JSON or XML
       payload.headers['content-disposition'] = response.headers['content-disposition']
     }
 
-    if (path.format === 'json' && response.statusCode === 200) {
-      payload.body = parseResponseRows(response.body)
+    if (path.format === 'xml') {
+      payload.headers['content-type'] = 'text/xml'
+    }
+
+    if ((path.format === 'json' || path.format === 'xml') && response.statusCode === 200) {
+      const parsedBody = deserializeJSON(response.body)
+      const rows = parsedBody.rows || parsedBody // fallback if no rows property
+      if (path.format === 'json') {
+        payload.body = serializeJSON(numbersToStrings(rows))
+      } else if (path.format === 'xml') {
+        payload.body = serializeXML(rows)
+      }
     } else {
       // If statusCode !== 200, there's no rows property anyway
       payload.body = response.body
@@ -84,12 +97,29 @@ function parsePath (params) {
   return parsed
 }
 
-function parseResponseRows (body) {
+function deserializeJSON (body) {
   try {
-    const parsedBody = JSON.parse(body)
-    return JSON.stringify(numbersToStrings(parsedBody.rows || parsedBody)) // fallback if no rows property
-  } catch (e) {
+    return JSON.parse(body)
+  } catch (err) {
     console.error('Failed to parse response json')
+  }
+}
+
+function serializeJSON (rows) {
+  try {
+    return JSON.stringify(rows)
+  } catch (err) {
+    console.error('Failed to serialize response json')
+  }
+}
+
+function serializeXML (rows) {
+  try {
+    const xmlRows = xml({ row: rows }) // wraps each row in row property
+    // Wrap it with a string because the xml lib isn't clever enough
+    return '<response><rows>' + xmlRows + '</rows></response>'
+  } catch (err) {
+    console.error('Failed to serialize response xml')
   }
 }
 
