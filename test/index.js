@@ -268,7 +268,7 @@ test.skip('$where: not between', (t) => {
   t.equal(output, expect)
 })
 
-test.skip('$where: intersects', (t) => {
+test('$where: intersects', (t) => {
   t.plan(1)
   const input = `$where=intersects(location, 'POINT (-12.3, 45.6)')`
   const expect = `SELECT ${star} WHERE ST_Intersects(the_geom, 'POINT (-12.3, 45.6)'::geometry) ${limit}`
