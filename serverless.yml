@@ -173,7 +173,7 @@ resources:
         Integration:
           IntegrationHttpMethod: GET
           Type: HTTP_PROXY
-          Uri: https://cityofphiladelphia.github.io/vizwit-pages/{proxy} # the URL you want to set a proxy to
+          Uri: https://cityofphiladelphia.github.io/vizwit-pages/{proxy}/ # the URL you want to set a proxy to
           IntegrationResponses:
             - StatusCode: 200
           RequestParameters:
