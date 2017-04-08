@@ -178,4 +178,5 @@ resources:
             - StatusCode: 200
           RequestParameters:
             integration.request.path.proxy: method.request.path.proxy
+            integration.request.header.Accept-Encoding: "'identity'"
           PassthroughBehavior: WHEN_NO_MATCH
