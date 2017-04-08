@@ -118,7 +118,7 @@ due to a shortcoming of the `node-sqlparser` library. Each feature should have a
 | $where | not in function | `$where=foo not in ('bar', 'baz')` | auto |
 | $where | between | `$where=foo between '100' and '200'` | auto |
 | $where | not between | `$where=foo not between '100' and '200'` | not supported |
-| $where | intersects | `$where=intersects(location, 'POINT (-12.3, 45.6)')` | todo |
+| $where | intersects | `$where=intersects(location, 'POINT (-12.3, 45.6)')` | supported |
 | $where | starts with | `$where=starts_with(title, 'chief')` | todo |
 | $where | within box | `$where=within_box(location, 47.5, -122.3, 47.5, -122.3)` | supported |
 | $where | within circle | `$where=within_circle(location, 47.59815, -122.33454, 500)` | supported |
