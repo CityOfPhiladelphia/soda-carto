@@ -109,7 +109,10 @@ hezk-qta3:
   carto_table: elected_committee_people
 
 npdr-96qp:
-  carto_table: property_assessments
+  carto_table: assessments_1
+  
+a67f-xaf2:
+  carto_table: assessments_1
 
 # spatial
 
@@ -212,6 +215,10 @@ wgjz-gmue:
 w7rb-qrn8:
   carto_table: opa_properties_public
   geometry_field: shape
+  
+3h6i-2hfj:
+  carto_table: opa_properties_public
+  # don't know the geometry_field but we should
 
 6tns-3zss:
   carto_table: residential_parking_permit_blocks
